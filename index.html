@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEYS Player - 21 Stanica</title>
+    <title>DEYS Player - 20 Stanica</title>
     <style>
         * {
             margin: 0;
@@ -451,7 +451,7 @@
     <div class="container">
         <header>
             <h1>DEYS Player</h1>
-            <p class="subtitle">Web Player - 21 Radio Stanica</p>
+            <p class="subtitle">Web Player - 20 Radio Stanica</p>
         </header>
 
         <div class="now-playing" id="nowPlaying">
@@ -473,7 +473,7 @@
             </div>
             <div class="volume-control">
                 <span class="volume-label">Glasnoca</span>
-                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="80">
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="20">
             </div>
         </div>
 
@@ -666,16 +666,6 @@
                 </button>
             </div>
 
-            <div class="station-card" data-url="http://su-data.com:8009/stream/1/">
-                <div class="station-icon">SG</div>
-                <div class="station-name">Radio Stari Grad</div>
-                <div class="station-desc">Beograd - starogradska i zabavna muzika</div>
-                <button class="play-btn">
-                    <span class="play-icon">&#9658;</span>
-                    <span class="btn-text">Slusaj</span>
-                </button>
-            </div>
-
             <div class="station-card" data-url="http://media.srb-streaming.com:8000/stream">
                 <div class="station-icon">N</div>
                 <div class="station-name">Stara Narodna</div>
@@ -697,8 +687,7 @@
             </div>
 
             <!-- Extra FM stanice -->
-
-            <div class="station-card" data-url="http://streams.extrafm.hr:8110/stream">
+            <div class="station-card" data-url="http://streams.extrafm.hr:8110/;">
                 <div class="station-icon has-logo"><img src="https://extrafm.hr/sw-content/themes/sw/img/extrafm-logo.png" alt="Extra FM"></div>
                 <div class="station-name">Extra FM</div>
                 <div class="station-desc">Zagreb - Muzika koja te pokrece</div>
@@ -708,7 +697,7 @@
                 </button>
             </div>
 
-            <div class="station-card" data-url="http://c5.hostingcentar.com:8432/stream">
+            <div class="station-card" data-url="http://c5.hostingcentar.com:8432/;">
                 <div class="station-icon has-logo"><img src="https://extrafm.hr/sw-content/themes/sw/img/extrafm-logo.png" alt="Extra FM"></div>
                 <div class="station-name">Extra Throwback</div>
                 <div class="station-desc">Zagreb - Hitovi iz proslosti</div>
@@ -718,7 +707,7 @@
                 </button>
             </div>
 
-            <div class="station-card" data-url="http://c5.hostingcentar.com:8426/stream">
+            <div class="station-card" data-url="http://c5.hostingcentar.com:8426/;">
                 <div class="station-icon has-logo"><img src="https://extrafm.hr/sw-content/themes/sw/img/extrafm-logo.png" alt="Extra FM"></div>
                 <div class="station-name">Extra Fresh</div>
                 <div class="station-desc">Zagreb - Najnoviji hitovi</div>
@@ -727,6 +716,7 @@
                     <span class="btn-text">Slusaj</span>
                 </button>
             </div>
+
         </div>
 
         <footer>
@@ -750,7 +740,7 @@
         let intentionalStop = false;
         let draggedCard = null;
 
-        audio.volume = 0.8;
+        audio.volume = 0.2;
 
         // Load saved order from localStorage
         function loadSavedOrder() {
@@ -852,7 +842,7 @@
                         intentionalStop = false;
                         audio.src = url;
                         audio.play().catch(e => {
-                            alert('Kliknite ponovo za pokretanje streama');
+                            console.log('Autoplay blocked, user interaction required');
                         });
 
                         btn.innerHTML = '<span class="play-icon">&#9632;</span><span class="btn-text">Stop</span>';
@@ -902,8 +892,14 @@
         });
 
         audio.addEventListener('error', () => {
-            if (!intentionalStop) {
-                alert('Greska pri ucitavanju streama. Moguce da server ne dozvoljava CORS.');
+            if (!intentionalStop && currentlyPlaying) {
+                console.log('Stream error - CORS or connection issue');
+                const btn = currentlyPlaying.querySelector('.play-btn');
+                btn.innerHTML = '<span class="play-icon">&#9658;</span><span class="btn-text">Slusaj</span>';
+                btn.classList.remove('playing');
+                currentlyPlaying.classList.remove('playing');
+                nowPlaying.classList.remove('active');
+                currentlyPlaying = null;
             }
             intentionalStop = false;
         });
